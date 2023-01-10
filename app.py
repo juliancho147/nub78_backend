@@ -1,7 +1,9 @@
+__version__ = '1.0'
+__author__ = 'Julian Camilo Builes Serrano'
+
 import re
 from flask import Flask, make_response, jsonify, request
 from flask_cors import CORS
-
 from components.models import Sucursal, Tecnico
 
 app = Flask(__name__)
@@ -71,14 +73,16 @@ def insert_tecnicos():
     tecnico = request.json["tecnico"]
     # generar la validacion de la estructura del id
     id = tecnico["id"]
-    if re.match("^[a-zA-Z0-9]*$", id):
+    if not re.match("^[a-zA-Z0-9]*$", id):
         return make_response(jsonify({"error": "id en formato incorrecto"}), 400)
     if len(tecnico["elementos"]) == 0:
         return make_response(
             jsonify({"error": "tiene que tener minimo un elemento asignado"}), 400
         )
     else:
-        for elemento_id, cantidad in tecnico["elementos"].items():
+        for elemento in tecnico["elementos"]:
+            elemento_id =  elemento["id"]
+            cantidad = elemento["cantidad"]
             if cantidad > 10:
                 return make_response(
                     jsonify(

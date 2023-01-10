@@ -1,3 +1,5 @@
+__version__ = '1.0'
+__author__ = 'Julian Camilo Builes Serrano'
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base

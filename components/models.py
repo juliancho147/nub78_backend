@@ -1,3 +1,6 @@
+__version__ = '1.0'
+__author__ = 'Julian Camilo Builes Serrano'
+
 from sqlalchemy import (
     Column,
     String,
@@ -53,7 +56,9 @@ class Tecnico(DATABASE):
                         sucursal_id=tecnico["sucursal_id"],
                     )
                 )
-                for elemento_id, cantidad in tecnico["elementos"].items():
+                for elemento in tecnico["elementos"]:
+                    elemento_id =  elemento["id"]
+                    cantidad = elemento["cantidad"]
                     connection.execute(
                         insert(ElementoXTecnico).values(
                             elemento_id=elemento_id,
@@ -78,7 +83,9 @@ class Tecnico(DATABASE):
                         sucursal_id=tecnico["sucursal_id"],
                     )
                 )
-                for elemento_id, cantidad in tecnico["elementos"].items():
+                for elemento in tecnico["elementos"]:
+                    elemento_id =  elemento["id"]
+                    cantidad = elemento["cantidad"]
                     connection.execute(
                         update(ElementoXTecnico)
                         .where(

@@ -1,10 +1,10 @@
-__version__ = '1.0'
-__author__ = 'Julian Camilo Builes Serrano'
+__version__ = "1.0"
+__author__ = "Julian Camilo Builes Serrano"
 
 import re
 from flask import Flask, make_response, jsonify, request
 from flask_cors import CORS
-from components.models import Sucursal, Tecnico
+from components.models import Sucursal, Tecnico, ElementoXTecnico, Elemento
 
 app = Flask(__name__)
 CORS(app)
@@ -27,9 +27,26 @@ def get_tecnicos():
         response.append(dict(tecnico))
     return make_response(jsonify(response))
 
+
+@app.route("/get_todos_los_elementos", methods=["GET"])
+def get_todos_los_elementos():
+    """funcion que trae todos los elementos que se
+    encuntran en el sistema
+
+    Returns:
+        json: todos los elementos
+    """
+    elementos = Elemento.get_todos_los_elementos()
+    response = []
+    for elemento in elementos:
+        response.append(dict(elemento))
+    return make_response(jsonify(response))
+    pass
+
+
 @app.route("/get_sucursales", methods=["GET"])
 def get_sucurlsales():
-    """trae todas las sucursales que estan en el 
+    """trae todas las sucursales que estan en el
     sistema
     """
     scursales = Sucursal.get_all()
@@ -39,9 +56,11 @@ def get_sucurlsales():
     return make_response(jsonify(response))
 
     return
-@app.route("/get_elementos",methods=["POST"])
+
+
+@app.route("/get_elementos", methods=["POST"])
 def get_elementos():
-    """se encarga de buscar los elementos 
+    """se encarga de buscar los elementos
     asignanos para un tecnico
     """
     tecnico = request.json["tecnico"]
@@ -49,7 +68,25 @@ def get_elementos():
     response = []
     for elemento in elementos:
         response.append(dict(elemento))
-    return make_response(jsonify(response),200)
+    return make_response(jsonify(response), 200)
+
+
+@app.route("/insert_elemento_to_tecnico", methods=["POST"])
+def insert_elemento():
+    """funcion para insertar un elemento a una tecnico, por
+    defecto se deja en 1
+
+    tecnico : {
+        id:id,
+        elemento_id:id
+    }
+    """
+    tecnico = request.json["tecnico"]
+    status = ElementoXTecnico.insert_elemento(tecnico)
+    if status != "ok":
+        return make_response(jsonify({"response": str(status)}), 200)
+    return make_response(jsonify({"response": "ok"}), 200)
+
 
 @app.route("/insert_tecnico", methods=["POST"])
 def insert_tecnicos():
@@ -60,11 +97,11 @@ def insert_tecnicos():
         nombre:nombre,
         sueldo:salario,
         sucursal_id:sucursal_id
-        elementos:{
-            id_elemento_1:cantidad_herramienta<1-10>,
+        elementos:[
+            {id_elemento_1:cantidad_herramienta<1-10>},
             ...,
-            id_elemento_n:cantidad_herramienta<1-10>
-        }
+            {id_elemento_n:cantidad_herramienta<1-10>}
+        ]
     }
 
     Returns:
@@ -81,7 +118,7 @@ def insert_tecnicos():
         )
     else:
         for elemento in tecnico["elementos"]:
-            elemento_id =  elemento["id"]
+            elemento_id = elemento["id"]
             cantidad = elemento["cantidad"]
             if cantidad > 10:
                 return make_response(
@@ -110,19 +147,37 @@ def update_tecnico():
         nombre:nombre,
         sueldo:salario,
         sucursal_id:sucursal_id
-        elementos:{
-            id_elemento_1:cantidad_herramienta<1-10>,
+        elementos:[
+            {id_elemento_1:cantidad_herramienta<1-10>},
             ...,
-            id_elemento_n:cantidad_herramienta<1-10>
-        }
+            {id_elemento_n:cantidad_herramienta<1-10>}
+        ]
+    }
+    """
+    app.logger.info(request.json)
+    tecnico = request.json["tecnico"]
+
+    status = Tecnico.update(tecnico, app)
+    if status != "ok":
+        return make_response(jsonify({"response": str(status)}), 400)
+
+    return make_response(jsonify({"response": "ok"}), 200)
+
+
+@app.route("/drop_element", methods=["DELETE"])
+def dropElement():
+    """funcion para eliminar un elemento a una persona
+
+    tecnico : {
+        id:id,
+        elemento_id:id
     }
     """
     tecnico = request.json["tecnico"]
-
-    status = Tecnico.update(tecnico)
+    app.logger.info(request.json)
+    status = ElementoXTecnico.drop_element(tecnico, app)
     if status != "ok":
-        return make_response(jsonify({"response": str(status)}), 200)
-
+        return make_response(jsonify({"response": str(status)}), 400)
     return make_response(jsonify({"response": "ok"}), 200)
 
 

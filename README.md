@@ -18,3 +18,25 @@ Para el manejo de la base de datos se utlizo el motor MySql, dentro de esta se c
 
 <img src="https://github.com/juliancho147/nub78_backend/blob/main/diagramas/diagrama%20relacional.jpg?raw=true" alt="drawing" width="500"/>
 
+<h3>EndPoints</h3>
+
+Para poder editar todas las funcionalidades de los tecnicos en el sistema se crearon difenrentes rutas, las cuales son:
+
+DELETE   /delete_tecnico
+
+DELETE   /drop_element
+
+POST     /get_elementos
+
+GET      /get_sucursales
+
+GET      /get_tecnicos
+
+GET      /get_todos_los_elementos
+
+POST     /insert_elemento_to_tecnico
+
+POST     /insert_tecnico
+
+PUT      /update_tecnico
+

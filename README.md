@@ -40,3 +40,7 @@ POST     /insert_tecnico
 
 PUT      /update_tecnico
 
+
+<h3>FrontEnd</h3>
+
+Se realizó un desarrollo en Angular para poder ver de forma mas facil el funcionamiento del sistme, para poder acceder a este se tiene que descargar el código del siguiente enlace https://github.com/juliancho147/nub78_frontend
